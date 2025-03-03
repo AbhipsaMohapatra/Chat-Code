@@ -25,7 +25,7 @@ function App() {
   
 
    useEffect(()=>{
-    console.log("📦 Checking userInfo in localStorage");
+    
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userInfo);
 
@@ -37,6 +37,7 @@ function App() {
 
 
      // ✅ Handle Code Room Navigation
+     console.log("📦 Checking userInfo in localStorage");
      const storedRoomId = localStorage.getItem("roomId");
      const storedUserName = localStorage.getItem("userName");
  

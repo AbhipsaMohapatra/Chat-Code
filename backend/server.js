@@ -132,9 +132,9 @@ io.on("connection", (socket) => {
     socket.userId = null;
 
     if (socket.currentRoom) {
-      socket.leave(currentRoom);
-      rooms.get(currentRoom).delete(currentUser);
-      io.to(currentRoom).emit("UserJoined", Array.from(rooms.get(currentRoom)));
+      socket.leave(socket.currentRoom);
+      rooms.get(socket.currentRoom).delete(socket.currentUser);
+      io.to(socket.currentRoom).emit("UserJoined", Array.from(rooms.get(socket.currentRoom)));
     }
     socket.currentRoom = roomId;
     socket.currentUser = userName;
@@ -158,6 +158,7 @@ io.on("connection", (socket) => {
     socket.on("getUsers", (roomId) => {
       if (rooms.has(roomId)) {
         const users = Array.from(rooms.get(roomId));
+        console.log("🔄 getUsers called, sending:", users);
         socket.emit("UserJoined", users); // Send the list to the requesting user
       }
     });
@@ -203,6 +204,14 @@ io.on("connection", (socket) => {
       }
     });
   });
+
+  // socket.on("getUsers", (roomId) => {
+  //     if (rooms.has(roomId)) {
+  //       const users = Array.from(rooms.get(roomId));
+  //       console.log("🔄 getUsers called, sending:", users);
+  //       socket.emit("UserJoined", users); // Send the list to the requesting user
+  //     }
+  //   });
 
   //   socket.on("reconnect", () => {
   //     const userData = userSessions.get(socket.id);

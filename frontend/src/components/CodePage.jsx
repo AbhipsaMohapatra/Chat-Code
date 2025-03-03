@@ -27,7 +27,11 @@ const CodePage = () => {
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
-  const [cusers, setCusers] = useState([]);
+  // const [cusers, setCusers] = useState([]);
+  const [cusers, setCusers] = useState(() => {
+    return JSON.parse(localStorage.getItem("cusers")) || [];
+  });
+  
   const [typing, setTyping] = useState("");
   const [output, setOutput] = useState("");
   const [version, setVersion] = useState("*");
@@ -37,6 +41,7 @@ const CodePage = () => {
   //   });
 
   useEffect(() => {
+    console.log(localStorage.getItem("roomId"))
     const storedRoomId = localStorage.getItem("roomId") || "";
     const storedUserName = localStorage.getItem("userName") || "";
 
@@ -62,13 +67,20 @@ const CodePage = () => {
     }
 
     
-    if (roomId) {
-      socket.emit("getUsers", roomId);
-    }
+    // if (roomId) {
+    //   socket.emit("getUsers", roomId);
+    // }
+    // setTimeout(() => {
+    //   socket.emit("joinRoom", { roomId: storedRoomId, userName: storedUserName });
+    //   socket.emit("getUsers", storedRoomId);
+    // }, 500);
+    socket.emit("getUsers", storedRoomId);  // Emit only after setting state
+
 
     const handleUserJoined = (users) => {
       console.log("Updated Users List:", users);
       setCusers(users);
+      localStorage.setItem("cusers", JSON.stringify(users));
     };
     const handleLeftUser = (leftUser) => {
       toast({
