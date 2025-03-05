@@ -128,12 +128,13 @@ io.on("connection", (socket) => {
 
   socket.on("join", ({ roomId, userName }) => {
     console.log(`Join event received from ${userName} for room ${roomId}`);
-    socket.currentRoom = null; // Initialize to prevent accidental errors
-    socket.userId = null;
+    console.log("Current rooms state before join:", rooms);
+    // socket.currentRoom = null; // Initialize to prevent accidental errors
+    // socket.userId = null;
 
     if (socket.currentRoom) {
       socket.leave(socket.currentRoom);
-      rooms.get(socket.currentRoom).delete(socket.currentUser);
+      rooms.get(socket.currentRoom)?.delete(socket.currentUser);
       io.to(socket.currentRoom).emit("UserJoined", Array.from(rooms.get(socket.currentRoom)));
     }
     socket.currentRoom = roomId;
@@ -151,23 +152,34 @@ io.on("connection", (socket) => {
       `User ${userName} joined room ${roomId}. Users now:`,
       Array.from(rooms.get(roomId))
     );
+    console.log("Current rooms state before join:", rooms);
 
     io.to(roomId).emit("UserJoined", Array.from(rooms.get(roomId)));
     // console.log("user Joined room for Code",roomId);
 
-    socket.on("getUsers", (roomId) => {
-      if (rooms.has(roomId)) {
-        const users = Array.from(rooms.get(roomId));
-        console.log("🔄 getUsers called, sending:", users);
-        socket.emit("UserJoined", users); // Send the list to the requesting user
-      }
-    });
+    // socket.on("getUsers", (roomId) => {
+    //   if (rooms.has(roomId)) {
+    //     const users = Array.from(rooms.get(roomId));
+    //     console.log("🔄 getUsers called, sending:", users);
+    //     socket.emit("UserJoined", users); // Send the list to the requesting user
+    //   }
+    // });
 
     socket.on("codeChange", ({ roomId, code }) => {
       socket.to(roomId).emit("codeUpdate", code);
     });
 
     socket.on("userLeft", ({ roomId, userName }) => {
+      // socket.to(roomId).emit("userLeft", userName);
+      if (rooms.has(roomId)) {
+        rooms.get(roomId).delete(userName);
+        
+        if (rooms.get(roomId).size === 0) {
+          rooms.delete(roomId); // Remove empty room
+        } else {
+          io.to(roomId).emit("UserJoined", Array.from(rooms.get(roomId)));
+        }
+      }
       socket.to(roomId).emit("userLeft", userName);
     });
 
@@ -205,13 +217,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  // socket.on("getUsers", (roomId) => {
-  //     if (rooms.has(roomId)) {
-  //       const users = Array.from(rooms.get(roomId));
-  //       console.log("🔄 getUsers called, sending:", users);
-  //       socket.emit("UserJoined", users); // Send the list to the requesting user
-  //     }
-  //   });
+  socket.on("getUsers", (roomId) => {
+    if (rooms.has(roomId)) {
+      const users = Array.from(rooms.get(roomId));
+      console.log("🔄 getUsers called, sending:", users);
+      io.to(roomId).emit("UserJoined", users);
+    }
+  });
 
   //   socket.on("reconnect", () => {
   //     const userData = userSessions.get(socket.id);
@@ -238,7 +250,7 @@ io.on("connection", (socket) => {
     if (socket.currentRoom && rooms.has(socket.currentRoom)) {
       rooms.get(socket.currentRoom).delete(socket.currentUser);
 
-      // Wait 2 seconds before updating the users list
+      
 
       if (rooms.has(socket.currentRoom)) {
         io.to(socket.currentRoom).emit(
