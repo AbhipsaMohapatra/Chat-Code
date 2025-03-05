@@ -67,14 +67,9 @@ const CodePage = () => {
     }
 
     
-    // if (roomId) {
-    //   socket.emit("getUsers", roomId);
-    // }
-    // setTimeout(() => {
-    //   socket.emit("joinRoom", { roomId: storedRoomId, userName: storedUserName });
-    //   socket.emit("getUsers", storedRoomId);
-    // }, 500);
-    socket.emit("getUsers", storedRoomId);  // Emit only after setting state
+    
+    socket.emit("join", { roomId: storedRoomId, userName: storedUserName });
+    // socket.emit("getUsers", storedRoomId);  // Emit only after setting state
 
 
     const handleUserJoined = (users) => {
@@ -117,9 +112,16 @@ const CodePage = () => {
       }
     };
 
+    const handleJoinSuccess = () => {
+      console.log("✅ Join confirmed, requesting updated users list...");
+      socket.emit("getUsers", storedRoomId);
+  };
+
     socket.on("codeUpdate", handleUpdate);
 
     socket.on("UserJoined", handleUserJoined);
+    socket.on("joinSuccess",handleJoinSuccess);
+
     socket.on("userLeft", handleLeftUser);
     socket.on("userTyping", handleTyping);
     socket.on("languageUpdate", handleLanguage);
@@ -129,10 +131,12 @@ const CodePage = () => {
       console.log("🔴 CodePage Unmounted");
       console.log(`Disconnecting from room: ${roomId}`);
       socket.off("UserJoined", handleUserJoined);
+      socket.off("joinSuccess",handleJoinSuccess);
       socket.off("userLeft", handleLeftUser);
       socket.off("codeUpdate", handleUpdate);
       socket.off("userTyping", handleTyping);
       socket.off("codeResponse", handleCompile);
+
       setCusers([]);
     };
   }, []);

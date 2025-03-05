@@ -45,7 +45,7 @@ const Homepage = () => {
       localStorage.setItem("roomId", roomId);
       localStorage.setItem("userName", userName);
       socket.emit("join", { roomId, userName });
-      socket.emit("getUsers", roomId); // Request updated user list after joining
+      // socket.emit("getUsers", roomId); // Request updated user list after joining
       setJoined(true);
   
       console.log("Navigating to code page");

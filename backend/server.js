@@ -157,13 +157,16 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("UserJoined", Array.from(rooms.get(roomId)));
     // console.log("user Joined room for Code",roomId);
 
-    // socket.on("getUsers", (roomId) => {
-    //   if (rooms.has(roomId)) {
-    //     const users = Array.from(rooms.get(roomId));
-    //     console.log("🔄 getUsers called, sending:", users);
-    //     socket.emit("UserJoined", users); // Send the list to the requesting user
-    //   }
-    // });
+    // ✅ Emit 'joinSuccess' to inform the frontend that the join is complete
+    socket.emit("joinSuccess");
+
+    socket.on("getUsers", (roomId) => {
+      if (rooms.has(roomId)) {
+        const users = Array.from(rooms.get(roomId));
+        console.log("🔄 getUsers called, sending:", users);
+        socket.emit("UserJoined", users); // Send the list to the requesting user
+      }
+    });
 
     socket.on("codeChange", ({ roomId, code }) => {
       socket.to(roomId).emit("codeUpdate", code);
@@ -217,13 +220,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("getUsers", (roomId) => {
-    if (rooms.has(roomId)) {
-      const users = Array.from(rooms.get(roomId));
-      console.log("🔄 getUsers called, sending:", users);
-      io.to(roomId).emit("UserJoined", users);
-    }
-  });
+  // socket.on("getUsers", (roomId) => {
+  //   if (rooms.has(roomId)) {
+  //     const users = Array.from(rooms.get(roomId));
+  //     console.log("🔄 getUsers called, sending:", users);
+  //     io.to(roomId).emit("UserJoined", users);
+  //   }
+  // });
 
   //   socket.on("reconnect", () => {
   //     const userData = userSessions.get(socket.id);
