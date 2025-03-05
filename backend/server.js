@@ -164,7 +164,8 @@ io.on("connection", (socket) => {
       if (rooms.has(roomId)) {
         const users = Array.from(rooms.get(roomId));
         console.log("🔄 getUsers called, sending:", users);
-        socket.emit("UserJoined", users); // Send the list to the requesting user
+        // socket.emit("UserJoined", users);
+          io.to(roomId).emit("UserJoined", users); // Send the list to the requesting user
       }
     });
 
@@ -250,22 +251,50 @@ io.on("connection", (socket) => {
     //     }
     // }
 
-    if (socket.currentRoom && rooms.has(socket.currentRoom)) {
-      rooms.get(socket.currentRoom).delete(socket.currentUser);
+    // if (socket.currentRoom && rooms.has(socket.currentRoom)) {
+    //   rooms.get(socket.currentRoom).delete(socket.currentUser);
 
       
 
-      if (rooms.has(socket.currentRoom)) {
-        io.to(socket.currentRoom).emit(
-          "UserJoined",
-          Array.from(rooms.get(socket.currentRoom))
-        );
-      }
+    //   if (rooms.has(socket.currentRoom)) {
+    //     io.to(socket.currentRoom).emit(
+    //       "UserJoined",
+    //       Array.from(rooms.get(socket.currentRoom))
+    //     );
+    //   }
 
-      if (rooms.get(socket.currentRoom).size === 0) {
-        rooms.delete(socket.currentRoom);
+    //   if (rooms.get(socket.currentRoom).size === 0) {
+    //     rooms.delete(socket.currentRoom);
+    //   }
+    // }
+
+    if (socket.currentRoom && rooms.has(socket.currentRoom)) {
+      const users = rooms.get(socket.currentRoom);
+      
+      // Remove the user from the room
+      users.delete(socket.currentUser);
+
+      console.log(`📢 Updated Users List After Disconnect:`, Array.from(users));
+
+      // Manually call userLeft event with correct parameters
+      io.to(socket.currentRoom).emit("userLeft", { 
+          roomId: socket.currentRoom, 
+          userName: socket.currentUser 
+      });
+
+      // Notify remaining users
+      io.to(socket.currentRoom).emit("UserJoined", Array.from(users)); 
+
+      // Delete the room if empty
+      if (users.size === 0) {
+          rooms.delete(socket.currentRoom);
       }
-    }
+  }
+
+
+    if (socket.currentRoom) {
+      socket.leave(socket.currentRoom);
+  }
 
     if (socket.userId) {
       socket.leave(socket.userId); // Leave the room properly
