@@ -177,9 +177,18 @@ const CodePage = () => {
     socket.emit("languageChange", { roomId, language: newLanguage });
   };
 
-  const runCode = () => {
+  // const runCode = () => {
+  //   socket.emit("compileCode", { code, roomId, language, version });
+  // };
+  let debounceTimer;
+
+const runCode = () => {
+  if (debounceTimer) clearTimeout(debounceTimer); // Clear previous timer
+
+  debounceTimer = setTimeout(() => {
     socket.emit("compileCode", { code, roomId, language, version });
-  };
+  }, 1000); // 3-second delay before sending request
+};
 
   return (
     <div style={{ width: "100%" }}>

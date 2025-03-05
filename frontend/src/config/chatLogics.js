@@ -43,7 +43,12 @@ export const isSameSender = (messages, m, i, userId) => {
 
 
   export const isSameSenderMargin = (messages,m,i,userId) =>{
-    if(i< messages.length-1 && messages[i+1].sender?._id === m.sender?._id && messages[i].sender?._id != userId){
+    console.log(`Checking Margin for Message ${i}:`, {
+      senderID: m.sender?._id,
+      nextSenderID: messages[i + 1]?.sender?._id,
+      userID: userId
+    });
+    if(i< messages.length-1 && messages[i+1].sender?._id === m.sender?._id && messages[i].sender?._id !== userId){
       return 33;
     }
     else if(
@@ -55,6 +60,25 @@ export const isSameSender = (messages, m, i, userId) => {
       return "auto";
     }
   }
+  // export const isSameSenderMargin = (messages, m, i, userId) => {
+  //   if (
+  //     i < messages.length - 1 &&
+  //     String(messages[i + 1]?.sender?._id) === String(m.sender?._id) &&
+  //     String(messages[i]?.sender?._id) !== String(userId)
+  //   ) {
+  //     return 33;
+  //   } else if (
+  //     (i < messages.length - 1 &&
+  //       String(messages[i + 1]?.sender?._id) !== String(m.sender?._id) &&
+  //       String(messages[i]?.sender?._id) !== String(userId)) ||
+  //     (i === messages.length - 1 && String(messages[i]?.sender?._id) !== String(userId))
+  //   ) {
+  //     return 0;
+  //   } else {
+  //     return "0px";
+  //   }
+  // };
+  
 
 export const isSameUser = (messages,m,i)=>{
   return i>0 && messages[i-1].sender?._id === m.sender._id;
