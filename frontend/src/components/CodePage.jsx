@@ -17,10 +17,7 @@ const CodePage = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  // const [roomId] = useState(localStorage.getItem("roomId") || "");
-  // const [userName] = useState(localStorage.getItem("userName") || "");
-  // const [roomId] = useState(location.state?.roomId || localStorage.getItem("roomId"));
-  // const [userName] = useState(location.state?.userName || localStorage.getItem("userName"));
+ 
   const [roomId, setRoomId] = useState("");
   const [userName, setUserName] = useState("");
 

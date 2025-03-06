@@ -221,52 +221,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  // socket.on("getUsers", (roomId) => {
-  //   if (rooms.has(roomId)) {
-  //     const users = Array.from(rooms.get(roomId));
-  //     console.log("🔄 getUsers called, sending:", users);
-  //     io.to(roomId).emit("UserJoined", users);
-  //   }
-  // });
-
-  //   socket.on("reconnect", () => {
-  //     const userData = userSessions.get(socket.id);
-  //     if (userData) {
-  //       console.log(
-  //         `User ${userData.userName} reconnected to room ${userData.roomId}`
-  //       );
-  //       socket.emit("join", userData);
-  //     }
-  //   });
+ 
 
   socket.on("disconnect", () => {
     console.log("User Disconnected:", socket.userId);
 
-    // if (currentRoom && rooms.has(currentRoom)) {
-    //     rooms.get(currentRoom).delete(currentUser);
-    //     if (rooms.get(currentRoom).size === 0) {
-    //         rooms.delete(currentRoom);
-    //     } else {
-    //         io.to(currentRoom).emit("UserJoined", Array.from(rooms.get(currentRoom)));
-    //     }
-    // }
-
-    // if (socket.currentRoom && rooms.has(socket.currentRoom)) {
-    //   rooms.get(socket.currentRoom).delete(socket.currentUser);
-
-      
-
-    //   if (rooms.has(socket.currentRoom)) {
-    //     io.to(socket.currentRoom).emit(
-    //       "UserJoined",
-    //       Array.from(rooms.get(socket.currentRoom))
-    //     );
-    //   }
-
-    //   if (rooms.get(socket.currentRoom).size === 0) {
-    //     rooms.delete(socket.currentRoom);
-    //   }
-    // }
+    
 
     if (socket.currentRoom && rooms.has(socket.currentRoom)) {
       const users = rooms.get(socket.currentRoom);
