@@ -8,7 +8,7 @@ Our website is a collaborative platform that allows users to connect through rea
 ## Documentation
 
 First clone this github repository then go to VS code.  
-TO start , open 2 terminals.  
+To start , open 2 terminals.  
 In one terminal, write npm install then write npmstart,    
 and in other terminal , go to frontend folder and then write npm install then npm run dev.  
 Then ctrl+click on the frontend link. Now your website is ready to use.
