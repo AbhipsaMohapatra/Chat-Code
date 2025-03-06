@@ -17,7 +17,7 @@ const CodePage = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
- 
+
   const [roomId, setRoomId] = useState("");
   const [userName, setUserName] = useState("");
 
@@ -28,7 +28,7 @@ const CodePage = () => {
   const [cusers, setCusers] = useState(() => {
     return JSON.parse(localStorage.getItem("cusers")) || [];
   });
-  
+
   const [typing, setTyping] = useState("");
   const [output, setOutput] = useState("");
   const [version, setVersion] = useState("*");
@@ -38,7 +38,7 @@ const CodePage = () => {
   //   });
 
   useEffect(() => {
-    console.log(localStorage.getItem("roomId"))
+    console.log(localStorage.getItem("roomId"));
     const storedRoomId = localStorage.getItem("roomId") || "";
     const storedUserName = localStorage.getItem("userName") || "";
 
@@ -63,11 +63,8 @@ const CodePage = () => {
       socket.connect();
     }
 
-    
-    
     socket.emit("join", { roomId: storedRoomId, userName: storedUserName });
     // socket.emit("getUsers", storedRoomId);  // Emit only after setting state
-
 
     const handleUserJoined = (users) => {
       console.log("Updated Users List:", users);
@@ -75,8 +72,13 @@ const CodePage = () => {
       localStorage.setItem("cusers", JSON.stringify(users));
     };
     const handleLeftUser = (leftUser) => {
+      console.log("User left event received:", leftUser, typeof leftUser);
+
+      const userName =
+        typeof leftUser === "object" ? leftUser.userName : leftUser;
+      toast.closeAll();
       toast({
-        title: `${leftUser} left the room`,
+        title: `${userName} left the room`,
         status: "info",
         duration: 3000,
         isClosable: true,
@@ -112,12 +114,12 @@ const CodePage = () => {
     const handleJoinSuccess = () => {
       console.log("✅ Join confirmed, requesting updated users list...");
       socket.emit("getUsers", storedRoomId);
-  };
+    };
 
     socket.on("codeUpdate", handleUpdate);
 
     socket.on("UserJoined", handleUserJoined);
-    socket.on("joinSuccess",handleJoinSuccess);
+    socket.on("joinSuccess", handleJoinSuccess);
 
     socket.on("userLeft", handleLeftUser);
     socket.on("userTyping", handleTyping);
@@ -128,7 +130,7 @@ const CodePage = () => {
       console.log("🔴 CodePage Unmounted");
       console.log(`Disconnecting from room: ${roomId}`);
       socket.off("UserJoined", handleUserJoined);
-      socket.off("joinSuccess",handleJoinSuccess);
+      socket.off("joinSuccess", handleJoinSuccess);
       socket.off("userLeft", handleLeftUser);
       socket.off("codeUpdate", handleUpdate);
       socket.off("userTyping", handleTyping);
@@ -183,13 +185,13 @@ const CodePage = () => {
   // };
   let debounceTimer;
 
-const runCode = () => {
-  if (debounceTimer) clearTimeout(debounceTimer); // Clear previous timer
+  const runCode = () => {
+    if (debounceTimer) clearTimeout(debounceTimer); // Clear previous timer
 
-  debounceTimer = setTimeout(() => {
-    socket.emit("compileCode", { code, roomId, language, version });
-  }, 1000); // 3-second delay before sending request
-};
+    debounceTimer = setTimeout(() => {
+      socket.emit("compileCode", { code, roomId, language, version });
+    }, 1000); // 3-second delay before sending request
+  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -228,7 +230,6 @@ const runCode = () => {
             Users In Room:
           </Text>
           {cusers.map((user, index) => (
-            
             <Box
               key={index}
               bg="gray.700" // Grey background
