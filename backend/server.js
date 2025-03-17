@@ -173,7 +173,7 @@ io.on("connection", (socket) => {
       socket.to(roomId).emit("codeUpdate", code);
     });
 
-    socket.on("userLeft", ({ roomId, userName }) => {
+    socket.on("userLeft", ({ roomId, userName ,manual}) => {
       // socket.to(roomId).emit("userLeft", userName);
       if (rooms.has(roomId)) {
         rooms.get(roomId).delete(userName);
@@ -184,7 +184,7 @@ io.on("connection", (socket) => {
           io.to(roomId).emit("UserJoined", Array.from(rooms.get(roomId)));
         }
       }
-      socket.to(roomId).emit("userLeft", userName);
+      socket.to(roomId).emit("userLeft", {userName,manual});
     });
 
     socket.on("typing", ({ roomId, userName }) => {

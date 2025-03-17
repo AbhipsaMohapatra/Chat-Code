@@ -270,7 +270,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 margin={"auto"}
               />
             ) : (
-              <div className="message"><ScrollableChat messages={messages}/></div>
+              <div className="messages"><ScrollableChat messages={messages}/></div>
             )}
             <FormControl
               onKeyDown={sendMessage}

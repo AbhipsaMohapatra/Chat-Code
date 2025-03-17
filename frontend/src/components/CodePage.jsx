@@ -73,6 +73,11 @@ const CodePage = () => {
     };
     const handleLeftUser = (leftUser) => {
       console.log("User left event received:", leftUser, typeof leftUser);
+      const manualLeave = localStorage.getItem("manualLeave") === "true"; // Check manual flag
+
+      if (!leftUser.manual && !manualLeave) return; // Ignore if not a manual leave
+    
+      localStorage.removeItem("manualLeave"); // Reset the flag
 
       const userName =
         typeof leftUser === "object" ? leftUser.userName : leftUser;
@@ -164,7 +169,8 @@ const CodePage = () => {
     socket.emit("typing", { roomId, userName });
   };
   const handleLeave = () => {
-    socket.emit("userLeft", { roomId, userName });
+    localStorage.setItem("manualLeave", "true"); // Mark as manual leave
+    socket.emit("userLeft", { roomId, userName , manual:true });
     socket.disconnect(); // Disconnect the socket
     localStorage.removeItem("userId");
     localStorage.removeItem("roomId");
