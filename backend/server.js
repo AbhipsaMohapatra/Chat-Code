@@ -198,6 +198,7 @@ io.on("connection", (socket) => {
     socket.on("compileCode", async ({ code, roomId, language, version }) => {
       if (rooms.has(roomId)) {
         try {
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 sec before calling API
           const response = await axios.post(
             "https://emkc.org/api/v2/piston/execute",
             {

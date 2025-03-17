@@ -190,7 +190,7 @@ const CodePage = () => {
 
     debounceTimer = setTimeout(() => {
       socket.emit("compileCode", { code, roomId, language, version });
-    }, 1000); // 3-second delay before sending request
+    }, 3000); // 3-second delay before sending request
   };
 
   return (

@@ -61,12 +61,15 @@ const MyChats = ({ fetchAgain }) => {
       <Box
         pb={"3"}
         px={"3"}
-        fontSize={{ base: "28px", md: "30px" }}
+        fontSize={{  base: "28px", md: "18px", lg: "20px" }}
         fontFamily={"Work sans"}
         display={"flex"}
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
       >
         My Chats
         <GroupChatModal>
